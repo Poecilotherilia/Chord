@@ -1,0 +1,6 @@
+package com.Chord.data;
+
+public class Node {
+	private String ip;
+	private String port;
+}
