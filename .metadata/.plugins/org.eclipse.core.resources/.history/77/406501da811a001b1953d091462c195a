@@ -1,0 +1,44 @@
+package com.Net;
+
+import java.util.LinkedList;
+import java.util.Queue;
+
+import com.Chord.data.Node;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
+public class SeverDataProcessing implements Runnable{
+	public Queue<String> DataQueue = new LinkedList<String>();
+	int count = 0;
+	public void run() {
+		while(true) {
+				try {
+					Thread.sleep(1);
+					if(DataQueue.size() > 0) {
+						String data = DataQueue.poll();
+						System.out.println("收到包 data: "+ data);
+						count++;
+					}
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+	}
+	
+	private void DistributeData(String data) {
+		JSONObject json =  JSON.parseObject(data);
+		System.out.println("收到包 data: "+ data+"包头："+PacketType.values()[json.getInteger("PacketType")]);
+		switch(PacketType.values()[json.getInteger("PacketType")]){
+    	case FindLocWithCreateNode:
+    		Node.Instance().FinddLocWithCreateNode(json);
+    		break;
+    	case SuccessFindCreateNodeLoc:
+    		Node.Instance().SuccessFindCreateNodeLoc(json);
+    		break;
+    	case ChangeSuccessor:
+    		Node.Instance().ChangeSuccessor(json);
+    		break;
+    }
+	}
+}

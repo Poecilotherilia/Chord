@@ -1,0 +1,5 @@
+package com.Net;
+
+enum PacketType {
+	FindLocWithCreateNode
+}

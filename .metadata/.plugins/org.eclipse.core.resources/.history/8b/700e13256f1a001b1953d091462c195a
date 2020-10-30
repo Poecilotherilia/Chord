@@ -1,0 +1,15 @@
+package com.Chord.data;
+
+import com.Chord.tool.SHA1;
+
+public class Node {
+	private Address addr;
+	private long hashCode;
+	private Address predecessor;
+	private Address successor;
+	public Node(String ip,int port) {
+		addr = new Address(ip,port);
+		this.hashCode = SHA1.GetHash(addr.GetString());
+	}
+	
+}

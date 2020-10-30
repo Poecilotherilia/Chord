@@ -3,13 +3,11 @@ package com.Chord.tool;
 import java.security.MessageDigest;
 
 public class SHA1 {
-	public static final long MAX_RING_NUM = 72057594037927936L;
-	public static final int RING_NUM_DIGIT = 56;
 	
     private static long GetFormattedText(byte[] bytes) {
         long bufLong = 0;
-        for (int j = 0; j < RING_NUM_DIGIT / 8; j++) {
-            bufLong += ((long)(bytes[j] & 0xff) *(long)Math.pow(2, 8*(RING_NUM_DIGIT / 8 - j -1)));
+        for (int j = 0; j < Const.RING_LOC_DIGIT / 8; j++) {
+            bufLong += ((long)(bytes[j] & 0xff) *(long)Math.pow(2, 8*(Const.RING_LOC_DIGIT / 8 - j -1)));
         }
         return bufLong;
     }

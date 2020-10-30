@@ -1,0 +1,22 @@
+package com.Net;
+
+import java.net.DatagramPacket;
+import java.sql.Time;
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class SeverDataProcessing implements Runnable{
+	public Queue<String> DataQueue = new LinkedList<String>();
+	int count = 0;
+	public void run() {
+		while(true) {
+			//System.out.println("收到包 data: "+ DataQueue.size() +" "+count);
+				if(DataQueue.size() > 0) {
+					System.out.println("收到包 data: ");
+					String data = DataQueue.poll();
+					System.out.println("收到包 data: "+ data);
+					count++;
+				}
+		}
+	}
+}

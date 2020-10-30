@@ -1,0 +1,20 @@
+package com.Chord.data;
+
+import com.Net.Client;
+
+public class Node {
+	private Address addr;
+	private Address predecessor;
+	private Address successor;
+	private FingerTable fingerTable;
+	private Node(String ip,int port) {
+		this.addr = new Address(ip,port);
+		this.fingerTable = new FingerTable();
+	}
+	
+	public Node CreateNewNode(String ip,int port,String seed) {
+		Node node = new Node(ip,port);
+		Address seedAddr = new Address(seed);
+		Client.Instance().send(see, port, massage);
+	}
+}

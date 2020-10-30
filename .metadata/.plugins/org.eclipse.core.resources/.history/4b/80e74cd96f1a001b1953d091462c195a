@@ -1,0 +1,12 @@
+package com.Chord.data;
+
+import com.Chord.tool.Const;
+
+public class FingerTable {
+	private Finger[] table;
+	
+	FingerTable(){
+		table = new Finger[20];
+		
+	}
+}

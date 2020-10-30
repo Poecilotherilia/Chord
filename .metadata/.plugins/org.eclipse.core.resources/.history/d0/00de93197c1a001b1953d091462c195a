@@ -1,0 +1,6 @@
+package com.Chord.data;
+
+public class Finger {
+	public long local;
+	public Address addr;
+}

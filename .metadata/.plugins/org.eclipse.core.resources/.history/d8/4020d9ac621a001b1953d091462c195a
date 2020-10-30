@@ -1,0 +1,21 @@
+package com.Net;
+
+import java.net.DatagramPacket;
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class SeverDataProcessing implements Runnable{
+	public Queue<String> DataQueue = new LinkedList<String>();
+	
+	public void run() {
+		while(true) {
+			//System.out.println("收到包 data: ");
+				if(!DataQueue.isEmpty()) {
+					System.out.println("收到包 data: ");
+					String data = DataQueue.peek();
+					System.out.println("收到包 data: "+ data);
+				}
+
+		}
+	}
+}

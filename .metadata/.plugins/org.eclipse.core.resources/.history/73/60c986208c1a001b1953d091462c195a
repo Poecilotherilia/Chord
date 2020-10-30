@@ -1,0 +1,116 @@
+package com.Chord.data;
+
+import java.net.SocketException;
+import java.net.UnknownHostException;
+
+import com.Chord.tool.Const;
+import com.Net.Client;
+import com.Net.PacketType;
+import com.alibaba.fastjson.JSONObject;
+
+public class Node {
+	static private Node instance;
+	static public Node Instance() {
+		return instance;
+	}
+	private Address addr;
+	private Address predecessor;
+	private Address successor;
+	private FingerTable fingerTable;
+	private Node(String ip,int port) {
+		this.addr = new Address(ip,port);
+		this.fingerTable = new FingerTable(addr);
+	}
+	
+	public static void CreateNewNode(String ip,int port,String seed) throws UnknownHostException, SocketException {
+		Node node = new Node(ip,port);
+		if(seed.split(":").length < 2) {
+			System.out.println("创建新网络 ！！ 初始节点：  ip："+ ip+"  port"+port);
+			node.predecessor = new Address(node.addr.GetString());
+			node.successor = new Address(node.addr.GetString());
+			instance = node;
+			return;
+		}
+		Address seedAddr = new Address(seed);
+        JSONObject json = new JSONObject();
+        json.put("PacketType", PacketType.FindLocWithCreateNode.ordinal());
+        json.put("Address", node.addr.GetString());
+		Client.Instance().send(seedAddr.GetIP(), seedAddr.GetPort(),json.toJSONString());
+		instance = node;
+	}
+	
+	private boolean isMyLoc(Long aimHash) {
+		System.out.println(this.predecessor.HashCode() +" "+this.addr.HashCode()+" "+aimHash);
+		if(this.predecessor.HashCode() >= this.addr.HashCode()) {
+			if(aimHash <this.addr.HashCode() || aimHash > this.predecessor.HashCode()) {
+				return true;
+			}else {
+				return false;
+			}
+		}else {
+			if(aimHash <this.addr.HashCode() && aimHash > this.predecessor.HashCode()) {
+				return true;
+			}else {
+				return false;
+			}
+		}
+	}
+	
+	private void UpdateOwnFinger() throws UnknownHostException, SocketException {
+		for(int i = 0; i < Const.RING_LOC_DIGIT ; i++) {
+			JSONObject sendJson = new JSONObject();
+			sendJson.put("PacketType", PacketType.FindLoc.ordinal());
+			sendJson.put("local", this.fingerTable.GetTableLoc(i));
+			sendJson.put("Address", this.addr.GetString());
+			Client.Instance().send(this.successor.GetIP(), this.successor.GetPort(),sendJson.toJSONString());
+		}
+	}
+	
+	public void FinddLocWithCreateNode(JSONObject json) throws UnknownHostException, SocketException {
+		Address aimAddr = new Address(json.getString("Address"));
+		System.out.println("aaa: "+this.predecessor.HashCode() +" "+this.addr.HashCode()+" "+aimAddr.HashCode());
+		if(isMyLoc(aimAddr)) {
+			JSONObject sendJson = new JSONObject();
+			sendJson.put("PacketType", PacketType.SuccessFindCreateNodeLoc.ordinal());
+			sendJson.put("predecessor", this.predecessor.GetString());
+			sendJson.put("successor", this.addr.GetString());
+			Client.Instance().send(aimAddr.GetIP(), aimAddr.GetPort(),sendJson.toJSONString());
+			
+			JSONObject sendJson1 = new JSONObject();
+			sendJson1.put("PacketType", PacketType.ChangeSuccessor.ordinal());
+			sendJson1.put("successor", json.getString("Address"));
+			Client.Instance().send(this.predecessor.GetIP(), this.predecessor.GetPort(),sendJson1.toJSONString());
+			
+			this.predecessor = aimAddr;
+		}else {
+			Finger finger = this.fingerTable.SearchWithHash(aimAddr.HashCode());
+			Client.Instance().send(finger.addr.GetIP(), finger.addr.GetPort(),json.toJSONString());
+		}
+	}
+	
+	public void SuccessFindCreateNodeLoc(JSONObject json) throws UnknownHostException, SocketException {
+		this.predecessor = new Address(json.getString("predecessor"));
+		this.successor = new Address(json.getString("successor"));
+		System.out.println("加入节点 ！！   ip："+ this.addr.GetIP()+"  port"+this.addr.GetPort());
+		System.out.println("predecessor ！！   ip："+ this.predecessor.GetIP()+"  port"+this.predecessor.GetPort());
+		System.out.println("successor ！！   ip："+ this.successor.GetIP()+"  port"+this.successor.GetPort());
+		
+		//节点插入后跟新它的finger和其他的finger
+		this.UpdateOwnFinger();
+	}
+	
+	public void ChangeSuccessor(JSONObject json) {
+		this.successor = new Address(json.getString("successor"));
+		System.out.println("改变后继   ip："+ this.addr.GetIP()+"  port"+this.addr.GetPort());
+		System.out.println("predecessor ！！   ip："+ this.predecessor.GetIP()+"  port"+this.predecessor.GetPort());
+		System.out.println("successor ！！   ip："+ this.successor.GetIP()+"  port"+this.successor.GetPort());
+	}
+	
+	public void FindLoc(JSONObject json) {
+		Address aimAddr = new Address(json.getString("Address"));
+		
+		if(isMyLoc(aimAddr)) {
+			
+		}
+	}
+}

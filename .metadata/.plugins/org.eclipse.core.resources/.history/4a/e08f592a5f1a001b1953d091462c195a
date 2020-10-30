@@ -1,0 +1,35 @@
+package com.Net;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.SocketException;
+import java.util.ArrayList;
+
+import com.Chord.tool.Const;
+
+public class Sever implements Runnable{
+	DatagramSocket ds;
+	DatagramPacket dp;
+	byte [] bbuf = new byte [1024];
+	
+	private ArrayList<String> DataList = new ArrayList<String>();
+	
+	public Sever() throws Exception {
+		ds = new DatagramSocket(Const.PORT);
+		dp = new DatagramPacket(bbuf,bbuf.length);
+	}
+	
+	public void run() {
+		while(true) {
+			try {
+				ds.receive(dp);
+				System.out.println("收到包： ip:"+dp.getAddress().getHostAddress()+"	port:"+dp.getPort()+"		数据头： data:"+ (int)dp.getData()[0]);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+}

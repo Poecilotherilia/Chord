@@ -1,0 +1,10 @@
+package com.Chord.data;
+
+public class FingerTable {
+	
+	
+	FingerTable(){
+		
+		
+	}
+}

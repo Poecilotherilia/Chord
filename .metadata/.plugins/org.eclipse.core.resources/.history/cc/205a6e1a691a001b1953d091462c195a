@@ -1,0 +1,16 @@
+package com.Chord.data;
+
+public class Address {
+	private String ip;
+	private int port;
+	private String addr;
+	Address(String ip,int port){
+		this.ip = ip;
+		this.port = port;
+		this.addr = ip+":"+ port;
+	}
+	
+	public String GetString() {
+		return this.addr;
+	}
+}

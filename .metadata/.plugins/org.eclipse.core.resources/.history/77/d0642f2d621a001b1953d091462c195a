@@ -1,0 +1,19 @@
+package com.Net;
+
+import java.net.DatagramPacket;
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class SeverDataProcessing implements Runnable{
+	public Queue<String> DataQueue = new LinkedList<String>();
+	
+	public void run() {
+		while(true) {
+				if(!DataQueue.isEmpty()) {
+					String data = DataQueue.poll();
+					System.out.println("ÊÕµ½°ü data: "+ data);
+				}
+
+		}
+	}
+}

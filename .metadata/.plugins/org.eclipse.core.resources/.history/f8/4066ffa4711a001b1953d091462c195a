@@ -1,0 +1,14 @@
+package com.Chord.data;
+
+
+public class Node {
+	private Address addr;
+	private Address predecessor;
+	private Address successor;
+	private FingerTable fingerTable;
+	public Node(String ip,int port) {
+		this.addr = new Address(ip,port);
+		this.fingerTable = new FingerTable();
+	}
+	
+}
