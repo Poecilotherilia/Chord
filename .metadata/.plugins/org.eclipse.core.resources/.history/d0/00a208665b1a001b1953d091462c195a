@@ -1,5 +1,0 @@
-package com.Chord.tool;
-
-public class Const {
-	final static int PORT = 8080;
-}

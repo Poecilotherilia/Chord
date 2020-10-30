@@ -14,7 +14,7 @@ public class SeverDataProcessing implements Runnable{
 	public void run() {
 		while(true) {
 				try {
-					Thread.sleep(1);
+					Thread.sleep(10);
 					if(DataQueue.size() > 0) {
 						String data = DataQueue.poll();
 						this.DistributeData(data);

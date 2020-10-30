@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
-		<item value="&#x09;public String IP{" key="selection"/>
+		<item value="        JSONObject json =  JSON.parseObject(&quot;{\&quot;Address\&quot;:\&quot;127.0.0.1:12\&quot;,\&quot;PacketType\&quot;:\&quot;FindLocWithCreateNode\&quot;}&quot;);" key="selection"/>
 		<list key="findhistory">
+			<item value="        JSONObject json =  JSON.parseObject(&quot;{\&quot;Address\&quot;:\&quot;127.0.0.1:12\&quot;,\&quot;PacketType\&quot;:\&quot;FindLocWithCreateNode\&quot;}&quot;);"/>
 			<item value="&#x09;public String IP{"/>
 		</list>
 	</section>

@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="java.lang.System"/>
 <fullyQualifiedTypeName name="java.security.MessageDigest"/>
-<fullyQualifiedTypeName name="com.Chord.tool.SHA1"/>
 <fullyQualifiedTypeName name="com.Chord.tool.Socket"/>
+<fullyQualifiedTypeName name="com.Net.Sever"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="java.util.Queue"/>
+<fullyQualifiedTypeName name="java.util.LinkedList"/>
+<fullyQualifiedTypeName name="java.sql.Time"/>
+<fullyQualifiedTypeName name="com.Chord.tool.SHA1"/>
+<fullyQualifiedTypeName name="java.lang.System"/>
 <fullyQualifiedTypeName name="java.net.InetAddress"/>
+<fullyQualifiedTypeName name="com.Net.Client"/>
+<fullyQualifiedTypeName name="com.alibaba.fastjson.JSONObject"/>
+<fullyQualifiedTypeName name="com.Net.PacketType"/>
+<fullyQualifiedTypeName name="com.Chord.tool.Tool"/>
+<fullyQualifiedTypeName name="com.Chord.tool.Const"/>
+<fullyQualifiedTypeName name="java.util.Scanner"/>
+<fullyQualifiedTypeName name="com.Chord.data.Node"/>
+<fullyQualifiedTypeName name="com.Chord.tool.ScannerTest"/>
 </qualifiedTypeNameHistroy>

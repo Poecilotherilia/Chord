@@ -14,9 +14,9 @@ public class Node {
 		return instance;
 	}
 	private Address addr;
-	private Address predecessor;
-	private Address successor;
-	private FingerTable fingerTable;
+	public Address predecessor;
+	public Address successor;
+	public FingerTable fingerTable;
 	private Node(String ip,int port) {
 		this.addr = new Address(ip,port);
 		this.fingerTable = new FingerTable(addr);
@@ -104,7 +104,6 @@ public class Node {
 		
 		//节点插入后跟新它的finger和其他的finger
 		this.UpdateOwnFinger();
-		this.UpdateOtherFinger();
 	}
 	
 	public void ChangeSuccessor(JSONObject json) {
@@ -127,10 +126,15 @@ public class Node {
 			Client.Instance().send(finger.addr.GetIP(), finger.addr.GetPort(),json.toJSONString());
 		}
 	}
-	
-	public void SuccessFindLoc(JSONObject json) {
+	int count = 0;
+	public void SuccessFindLoc(JSONObject json) throws UnknownHostException, SocketException {
+		count++;
+		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   "+count);
 		int i = this.fingerTable.GetTableNum(json.getLong("local"));
 		this.fingerTable.SetTable(i, new Address(json.getString("Address")));
+		if(this.fingerTable.IsTableFull()) {
+			this.UpdateOtherFinger();
+		}
 	}
 	
 	public void UpdateNode(JSONObject json) throws UnknownHostException, SocketException {
