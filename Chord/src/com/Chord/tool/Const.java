@@ -1,9 +1,10 @@
 package com.Chord.tool;
 
 public class Const {
-	public static int PORT = 15698 +10 
-								   +10
-								   //+10
+	public static int PORT = 15698  +10 
+								   	+10
+								   	+10
+								   	+10
 			;
 	public static final long MAX_RING_LOC = 72057594037927936L;
 	public static final int RING_LOC_DIGIT = 56;

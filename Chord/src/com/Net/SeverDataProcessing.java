@@ -54,6 +54,15 @@ public class SeverDataProcessing implements Runnable{
     	case UpdateNode:
     		Node.Instance().UpdateNode(json);
     		break;
+    	case AddFileLoc:
+    		Node.Instance().AddFileLoc(json);
+    		break;
+    	case DeleteFileLoc:
+    		Node.Instance().DeleteFileLoc(json);
+    		break;
+    	case FindFileLoc:
+    		Node.Instance().FindFileLoc(json);
+    		break;
     }
 		
 	}

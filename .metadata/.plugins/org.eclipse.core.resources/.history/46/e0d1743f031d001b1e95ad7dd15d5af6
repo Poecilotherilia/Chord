@@ -1,0 +1,21 @@
+package com.Chord.data;
+
+import java.util.HashMap;
+
+import com.Chord.tool.SHA1;
+
+public class FileTable {
+	HashMap<Long,File> files = new HashMap<Long,File>();
+	public FileTable(){}
+	public void AddFile(String fileName ,String fileInformation) {
+		files.put(SHA1.GetHash(fileName),new File(fileName,fileInformation));
+	}
+	public void DeleteFile(long fileLocal) {
+		files.remove(fileLocal);
+	}
+	puble boolean FindFile(long fileLocal) {
+		if(files.containsKey(fileLocal)) {
+			return true;
+		}
+	}
+}

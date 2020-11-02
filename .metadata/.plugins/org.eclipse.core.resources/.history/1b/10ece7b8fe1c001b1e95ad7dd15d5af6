@@ -1,0 +1,10 @@
+package com.Chord.data;
+
+import java.util.ArrayList;
+
+public class File {
+	public long local;
+	public String FileName;
+	public string FileInformation
+	ArrayList<String> Files = new ArrayList<String>();
+}

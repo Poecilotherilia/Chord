@@ -1,0 +1,8 @@
+package com.Chord.data;
+
+
+public class File {
+	public long local;
+	public String FileName;
+	public String FileInformation;
+}

@@ -23,7 +23,6 @@ public class Client {
 	DatagramSocket s; 
 	
 	public Client() throws SocketException {
-		System.out.println(Const.PORT + 1);
 		s = new DatagramSocket(Const.PORT + 1);
 	}
 	

@@ -1,0 +1,14 @@
+package com.Chord.data;
+
+import java.util.HashMap;
+
+public class FileTable {
+	HashMap<Long,File> files = new HashMap<Long,File>();
+	public FileTable(){}
+	public void AddFile(String fileName ,String fileInformation) {
+		files.add(new File(fileName,fileInformation));
+	}
+	public void DeleteFile() {
+		for(i = 0;)
+	}
+}

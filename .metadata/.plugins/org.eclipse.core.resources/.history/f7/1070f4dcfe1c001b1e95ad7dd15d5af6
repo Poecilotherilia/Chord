@@ -1,0 +1,8 @@
+package com.Chord.data;
+
+import java.util.ArrayList;
+
+public class FileTable {
+	ArrayList<String> Files = new ArrayList<String>();
+	
+}

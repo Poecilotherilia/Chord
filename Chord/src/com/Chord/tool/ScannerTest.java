@@ -16,7 +16,7 @@ public class ScannerTest implements Runnable{
 		        if (scan.hasNextLine()) {
 		            String str2 = scan.nextLine();
 		            Node.Instance().fingerTable.PringTable();
-		            System.out.println(Node.Instance().predecessor.GetString()+" "+Node.Instance().successor.GetString());
+		            System.out.println(Node.Instance().addr.HashCode()+" "+Node.Instance().addr.GetString()+" "+Node.Instance().predecessor.GetString()+" "+Node.Instance().successor.GetString());
 		        }
 		}
 	}

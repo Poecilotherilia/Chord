@@ -3,8 +3,10 @@ package com.Chord.data;
 public class Finger {
 	public long local;
 	public Address addr;
-	Finger(long local,Address addr){
+	public boolean isFind;
+	Finger(long local,Address addr,boolean isFind){
 		this.local = local;
 		this.addr = addr;
+		this.isFind = isFind;
 	}
 }

@@ -4,6 +4,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import com.Chord.tool.Const;
+import com.Chord.tool.SHA1;
 import com.Net.Client;
 import com.Net.PacketType;
 import com.alibaba.fastjson.JSONObject;
@@ -13,13 +14,15 @@ public class Node {
 	static public Node Instance() {
 		return instance;
 	}
-	private Address addr;
+	public Address addr;
 	public Address predecessor;
 	public Address successor;
 	public FingerTable fingerTable;
+	public FileTable fileTable;
 	private Node(String ip,int port) {
 		this.addr = new Address(ip,port);
 		this.fingerTable = new FingerTable(addr);
+		this.fileTable = new FileTable();
 	}
 	
 	public static void CreateNewNode(String ip,int port,String seed) throws UnknownHostException, SocketException {
@@ -40,7 +43,6 @@ public class Node {
 	}
 	
 	private boolean isMyLoc(Long aimHash) {
-		System.out.println(this.predecessor.HashCode() +" "+this.addr.HashCode()+" "+aimHash);
 		if(this.predecessor.HashCode() >= this.addr.HashCode()) {
 			if(aimHash <this.addr.HashCode() || aimHash > this.predecessor.HashCode()) {
 				return true;
@@ -62,6 +64,7 @@ public class Node {
 			sendJson.put("PacketType", PacketType.FindLoc.ordinal());
 			sendJson.put("local", this.fingerTable.GetTableLoc(i));
 			sendJson.put("Address", this.addr.GetString());
+			sendJson.put("TTL", 16);
 			Client.Instance().send(this.successor.GetIP(), this.successor.GetPort(),sendJson.toJSONString());
 		}
 	}
@@ -75,7 +78,6 @@ public class Node {
 	
 	public void FinddLocWithCreateNode(JSONObject json) throws UnknownHostException, SocketException {
 		Address aimAddr = new Address(json.getString("Address"));
-		System.out.println("aaa: "+this.predecessor.HashCode() +" "+this.addr.HashCode()+" "+aimAddr.HashCode());
 		if(isMyLoc(aimAddr.HashCode())) {
 			JSONObject sendJson = new JSONObject();
 			sendJson.put("PacketType", PacketType.SuccessFindCreateNodeLoc.ordinal());
@@ -99,8 +101,6 @@ public class Node {
 		this.predecessor = new Address(json.getString("predecessor"));
 		this.successor = new Address(json.getString("successor"));
 		System.out.println("加入节点 ！！   ip："+ this.addr.GetIP()+"  port"+this.addr.GetPort());
-		System.out.println("predecessor ！！   ip："+ this.predecessor.GetIP()+"  port"+this.predecessor.GetPort());
-		System.out.println("successor ！！   ip："+ this.successor.GetIP()+"  port"+this.successor.GetPort());
 		
 		//节点插入后跟新它的finger和其他的finger
 		this.UpdateOwnFinger();
@@ -108,12 +108,18 @@ public class Node {
 	
 	public void ChangeSuccessor(JSONObject json) {
 		this.successor = new Address(json.getString("successor"));
-		System.out.println("改变后继   ip："+ this.addr.GetIP()+"  port"+this.addr.GetPort());
-		System.out.println("predecessor ！！   ip："+ this.predecessor.GetIP()+"  port"+this.predecessor.GetPort());
-		System.out.println("successor ！！   ip："+ this.successor.GetIP()+"  port"+this.successor.GetPort());
 	}
 	
 	public void FindLoc(JSONObject json) throws UnknownHostException, SocketException {
+		if(json.getInteger("TTL") <= 0) {
+			Address aimAddr = new Address(json.getString("Address"));
+			JSONObject sendJson = new JSONObject();
+			sendJson.put("PacketType", PacketType.SuccessFindLoc.ordinal());
+			sendJson.put("local", json.getLong("local"));
+			sendJson.put("Address", "");
+			Client.Instance().send(aimAddr.GetIP(), aimAddr.GetPort(),sendJson.toJSONString());
+			return;
+		}
 		if(isMyLoc(json.getLong("local"))) {
 			Address aimAddr = new Address(json.getString("Address"));
 			JSONObject sendJson = new JSONObject();
@@ -123,15 +129,21 @@ public class Node {
 			Client.Instance().send(aimAddr.GetIP(), aimAddr.GetPort(),sendJson.toJSONString());
 		}else {
 			Finger finger = this.fingerTable.SearchWithHash(json.getLong("local"));
+			int TTL = json.getInteger("TTL");
+			json.put("TTL", TTL-1);
 			Client.Instance().send(finger.addr.GetIP(), finger.addr.GetPort(),json.toJSONString());
 		}
 	}
 	int count = 0;
 	public void SuccessFindLoc(JSONObject json) throws UnknownHostException, SocketException {
 		count++;
-		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   "+count);
+		
 		int i = this.fingerTable.GetTableNum(json.getLong("local"));
-		this.fingerTable.SetTable(i, new Address(json.getString("Address")));
+		if(json.getString("Address").equals("")) {
+			this.fingerTable.SetTable(i, null,true);
+		}else {
+			this.fingerTable.SetTable(i, new Address(json.getString("Address")),true);
+		}
 		if(this.fingerTable.IsTableFull()) {
 			this.UpdateOtherFinger();
 		}
@@ -143,7 +155,37 @@ public class Node {
 			System.out.println("Finger跟新完毕 ！！   ip："+ this.addr.GetIP()+"  port"+this.addr.GetPort());
 		}else {
 			this.fingerTable.Update(aimAddr);
-			Client.Instance().send(this.successor.GetIP(), this.successor.GetPort(),json.toJSONString());
+			Client.Instance().send(this.predecessor.GetIP(), this.predecessor.GetPort(),json.toJSONString());
 		}
 	}
+	
+	public void AddFile(String fileName) throws UnknownHostException, SocketException {
+		if(isMyLoc(SHA1.GetHash(fileName))) {
+			this.fileTable.AddFile(fileName, this.addr.GetString());
+		}else {
+			JSONObject json = new JSONObject();
+	        json.put("PacketType", PacketType.AddFileLoc.ordinal());
+	        json.put("Address", this.addr.GetString());
+	        json.put("FileName", fileName);
+			Client.Instance().send(this.addr.GetIP(), this.addr.GetPort(),json.toJSONString());
+		}
+	}
+	
+	public void AddFileLoc(JSONObject json) throws UnknownHostException, SocketException {
+		if(isMyLoc(SHA1.GetHash(json.getString("FileName")))) {
+			this.fileTable.AddFile(json.getString("FileName"), json.getString("Address"));
+		}else {
+			Finger finger = this.fingerTable.SearchWithHash(json.getLong("local"));
+			Client.Instance().send(finger.addr.GetIP(), finger.addr.GetPort(),json.toJSONString());
+		}
+	}
+	
+	public String FindFile(String fileName) {
+		
+	}
+	
+	public void DeleteFile() {
+		
+	}
+	
 }

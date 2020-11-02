@@ -6,5 +6,7 @@ public enum PacketType {
 	ChangeSuccessor,
 	FindLoc,
 	SuccessFindLoc,
-	UpdateNode
+	UpdateNode,
+	AddFileLoc,
+	FindFileLoc
 }
