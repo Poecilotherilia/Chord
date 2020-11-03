@@ -8,6 +8,5 @@ public enum PacketType {
 	SuccessFindLoc,
 	UpdateNode,
 	AddFileLoc,
-	FindFileLoc,
-	SuccessFindFileLoc
+	FindFileLoc
 }

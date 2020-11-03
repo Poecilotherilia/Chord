@@ -19,7 +19,6 @@ public class Node {
 	public Address successor;
 	public FingerTable fingerTable;
 	public FileTable fileTable;
-	private HashMap
 	private Node(String ip,int port) {
 		this.addr = new Address(ip,port);
 		this.fingerTable = new FingerTable(addr);
@@ -189,7 +188,7 @@ public class Node {
 		
 	}
 	
-	public void SuccessFindFileLoc(JSONObject json) {
+public void SuccessFindFileLoc(JSONObject json) {
 		
 	}
 	
@@ -197,7 +196,4 @@ public class Node {
 		
 	}
 	
-	public void a(String b) {
-		System.out.println(b+" "+this.addr.GetString());
-	}
 }

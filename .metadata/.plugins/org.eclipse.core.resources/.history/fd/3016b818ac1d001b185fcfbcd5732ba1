@@ -60,9 +60,6 @@ public class SeverDataProcessing implements Runnable{
     	case FindFileLoc:
     		Node.Instance().FindFileLoc(json);
     		break;
-    	case SuccessFindFileLoc:
-    		Node.Instance().SuccessFindFileLoc(json);
-    		break;
     }
 		
 	}

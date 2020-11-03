@@ -32,7 +32,7 @@ public class Main {
         Node.CreateNewNode("127.0.0.1",Const.PORT,
         		//"");
         		"127.0.0.1:15698");
-        event = Node.class.getMethod("a", String.class);
+        event = Node.Instance().a;
         event.invoke(Node.Instance(), "aaa");
     }
 	
