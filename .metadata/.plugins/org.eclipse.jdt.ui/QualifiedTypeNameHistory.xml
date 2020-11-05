@@ -20,6 +20,6 @@
 <fullyQualifiedTypeName name="java.sql.Ref"/>
 <fullyQualifiedTypeName name="com.Chord.tool.SHA1"/>
 <fullyQualifiedTypeName name="java.util.EventObject"/>
-<fullyQualifiedTypeName name="java.lang.reflect.Method"/>
 <fullyQualifiedTypeName name="java.util.HashMap"/>
+<fullyQualifiedTypeName name="java.lang.reflect.Method"/>
 </qualifiedTypeNameHistroy>

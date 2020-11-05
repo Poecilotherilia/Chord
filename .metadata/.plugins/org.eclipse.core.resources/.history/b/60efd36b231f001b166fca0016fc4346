@@ -4,5 +4,5 @@ import java.lang.reflect.Method;
 
 public class Event {
 	public Method method;
-	public Object instance;
+	public Object obj;
 }

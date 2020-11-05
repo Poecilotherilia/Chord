@@ -1,5 +1,7 @@
 package com.Chord.data;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
@@ -18,12 +20,11 @@ public class Node {
 	public Address predecessor;
 	public Address successor;
 	public FingerTable fingerTable;
-	public FileTable fileTable;
-	private HashMap
+	private Method onFindFileSuccess;
+	private Object findFileInstance;
 	private Node(String ip,int port) {
 		this.addr = new Address(ip,port);
 		this.fingerTable = new FingerTable(addr);
-		this.fileTable = new FileTable();
 	}
 	
 	public static void CreateNewNode(String ip,int port,String seed) throws UnknownHostException, SocketException {
@@ -160,44 +161,47 @@ public class Node {
 		}
 	}
 	
-	public void AddFile(String fileName) throws UnknownHostException, SocketException {
-		if(isMyLoc(SHA1.GetHash(fileName))) {
-			this.fileTable.AddFile(fileName, this.addr.GetString());
-		}else {
-			JSONObject json = new JSONObject();
-	        json.put("PacketType", PacketType.AddFileLoc.ordinal());
-	        json.put("Address", this.addr.GetString());
-	        json.put("FileName", fileName);
-			Client.Instance().send(this.addr.GetIP(), this.addr.GetPort(),json.toJSONString());
-		}
+	public void FindFile(Long fileLoc,Method onFindFile,Object instance) throws UnknownHostException, SocketException {
+		this.onFindFileSuccess = onFindFile;
+		this.findFileInstance = instance;
+		JSONObject sendJson = new JSONObject();
+		sendJson.put("PacketType", PacketType.FindFileLoc.ordinal());
+		sendJson.put("local", fileLoc);
+		sendJson.put("Address", this.addr.GetString());
+		sendJson.put("TTL", 16);
+		Client.Instance().send(this.successor.GetIP(), this.successor.GetPort(),sendJson.toJSONString());
 	}
 	
-	public void AddFileLoc(JSONObject json) throws UnknownHostException, SocketException {
-		if(isMyLoc(SHA1.GetHash(json.getString("FileName")))) {
-			this.fileTable.AddFile(json.getString("FileName"), json.getString("Address"));
+	public void FindFileLoc(JSONObject json) throws UnknownHostException, SocketException {
+		if(json.getInteger("TTL") <= 0) {
+			Address aimAddr = new Address(json.getString("Address"));
+			JSONObject sendJson = new JSONObject();
+			sendJson.put("PacketType", PacketType.SuccessFindFileLoc.ordinal());
+			sendJson.put("local", json.getLong("local"));
+			sendJson.put("Address", "");
+			Client.Instance().send(aimAddr.GetIP(), aimAddr.GetPort(),sendJson.toJSONString());
+			return;
+		}
+		if(isMyLoc(json.getLong("local"))) {
+			Address aimAddr = new Address(json.getString("Address"));
+			JSONObject sendJson = new JSONObject();
+			sendJson.put("PacketType", PacketType.SuccessFindFileLoc.ordinal());
+			sendJson.put("local", json.getLong("local"));
+			sendJson.put("Address", this.addr.GetString());
+			Client.Instance().send(aimAddr.GetIP(), aimAddr.GetPort(),sendJson.toJSONString());
 		}else {
 			Finger finger = this.fingerTable.SearchWithHash(json.getLong("local"));
+			int TTL = json.getInteger("TTL");
+			json.put("TTL", TTL-1);
 			Client.Instance().send(finger.addr.GetIP(), finger.addr.GetPort(),json.toJSONString());
 		}
 	}
 	
-	public void FindFile(String fileName) {
-		
-	}
-	
-	public void FindFileLoc(JSONObject json) {
-		
-	}
-	
-	public void SuccessFindFileLoc(JSONObject json) {
-		
-	}
-	
-	public void DeleteFile() {
-		
-	}
-	
-	public void a(String b) {
-		System.out.println(b+" "+this.addr.GetString());
+	public void SuccessFindFileLoc(JSONObject json) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		if(json.getString("Address").equals("")) {
+			this.onFindFileSuccess.invoke(this.findFileInstance,null);
+		}else {
+			this.onFindFileSuccess.invoke(this.findFileInstance,new Address(json.getString("Address")));
+		}
 	}
 }
