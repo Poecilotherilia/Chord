@@ -29,11 +29,10 @@ public class Main {
 	    Thread t1 = new Thread(test);
 	    t1.start();
 	    
-        Node.CreateNewNode("127.0.0.1",Const.PORT,
-        		//"");
-        		"127.0.0.1:15698");
+        Node.CreateNewNode("127.0.0.1",Const.PORT,"127.0.0.1:15698");
         event = Node.class.getMethod("a", String.class);
         event.invoke(Node.Instance(), "aaa");
+        Node.Instance().FindFile(fileLoc, onFindFile, instance);
     }
 	
 

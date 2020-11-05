@@ -28,6 +28,7 @@ public class Node {
 	}
 	
 	public static void CreateNewNode(String ip,int port,String seed) throws UnknownHostException, SocketException {
+		Const.PORT = port;
 		Node node = new Node(ip,port);
 		if(seed.split(":").length < 2) {
 			System.out.println("创建新网络 ！！ 初始节点：  ip："+ ip+"  port"+port);
